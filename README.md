@@ -23,73 +23,90 @@ Taskify is a production-ready task management application designed to demonstrat
 - Background task handling using WorkManager
 - Material 3 design system
 
+This project reflects real-world Android development standards and scalable project structure.
+
 ---
 
 ## ✨ Features
 
-| Feature | Feature | Feature | Feature |
-|--------|--------|--------|--------|
-| ✅ Add new tasks | ✏️ Edit tasks | 🗑 Delete tasks | ✔️ Mark tasks as completed |
-| 📂 Manage task categories | 💾 Persistent storage (Room) | ⚡ Optimized compilation (KSP) | 🔄 Background tasks (WorkManager) |
-| 🎨 Clean Material 3 UI | 🏷️ Task priority levels | ⏰ Reminder notifications | 🔍 Search & filtering |
+-- ✅ Add new tasks
+- ✏️ Edit tasks
+- 🗑 Delete tasks
+- ✔️ Mark tasks as completed
+- 📂 Create and manage task cate
+- 🏷️ Task priority levels
+- ⏰ Reminder notifications
+- 🔍 Search & filteringgories
+- 💾 Persistent local storage using Room
+- ⚡ Optimized compilation using KSP
+- 🔄 Background task support (WorkManager)
+- 🎨 Clean Material 3 UI
 
 ---
 
 ## 📸 Screenshots
 
-| Home Screen | Add Task Screen | Show Category Screen | Add Category Screen |
-|------------|----------------|-------------------|------------------|
-| ![Home](screenshots/home_screen.jpg) | ![Add Task](screenshots/add_task_screen.jpg) | ![Show Category](screenshots/show_category_screen.jpg) | ![Add Category](screenshots/add_category_screen.jpg) |
+<p style="white-space: nowrap; overflow-x: auto; text-align: left;">
+  <img src="screenshots/home_screen.jpg" alt="Home Screen" style="height:300px; margin-right: 20px;">
+  <img src="screenshots/add_task_screen.jpg" alt="Add Task Screen" style="height:300px; margin-right: 20px;">
+  <img src="screenshots/show_category_screen.jpg" alt="Show Category Screen" style="height:300px; margin-right: 20px;">
+  <img src="screenshots/add_category_screen.jpg" alt="Add Category Screen" style="height:300px; margin-right: 20px;">
+</p>
 
 ---
 
 ## 🏗 Architecture
 
-**Presentation Layer**  
-- Jetpack Compose UI  
-- ViewModel (MVVM)
+This project follows Clean Architecture principles:
 
-**Data Layer**  
-- Repository Pattern  
-- Room Database  
-- DAO
+Presentation Layer  
+→ Jetpack Compose UI  
+→ ViewModel (MVVM)
 
-Dependency Injection is handled using Hilt.  
-Room database uses Kotlin Symbol Processing (KSP).  
-WorkManager handles background tasks.
+Data Layer  
+→ Repository Pattern  
+→ Room Database  
+→ DAO
+
+Dependency Injection is handled using Hilt.
+
+Room database uses Kotlin Symbol Processing (KSP) for improved build performance.
+
+WorkManager is used for background task execution.
 
 ---
 
 ## 🛠 Tech Stack
 
-- Kotlin  
-- Jetpack Compose  
-- MVVM Architecture  
-- Clean Architecture  
-- Hilt (Dependency Injection)  
-- Room Database  
-- KSP (Kotlin Symbol Processing)  
-- WorkManager  
+- Kotlin
+- Jetpack Compose
+- MVVM Architecture
+- Clean Architecture
+- Hilt (Dependency Injection)
+- Room Database
+- KSP (Kotlin Symbol Processing)
+- WorkManager
 - Material 3
 
 ---
 
 ## 🚀 Future Improvements
 
-- 🌙 Dark mode support  
-- ☁️ Firebase cloud sync  
-- 📊 Analytics & task statistics  
-- 🔔 Daily/weekly summary notifications  
-- 🌐 Multi-device sync  
-- 📝 Export tasks as PDF/CSV  
-- 🔍 Advanced search & filters
-
+- Dark mode support
+- Firebase cloud sync
+- Search & filtering
+- Analytics & task statistics
+- Daily/weekly summary notifications
+- Multi-device sync
+- Export tasks as PDF/CSV
+- Advanced search & filters
+  
 ---
 
 ## 👩‍💻 Author
 
 **Sangita Patel**  
-Android Developer (8+ Years Experience)
+Android Developer (8+ Years Experience)  
 
 ---
 

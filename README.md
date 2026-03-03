@@ -29,11 +29,14 @@ This project reflects real-world Android development standards and scalable proj
 
 ## ✨ Features
 
-- ✅ Add new tasks
+-- ✅ Add new tasks
 - ✏️ Edit tasks
 - 🗑 Delete tasks
 - ✔️ Mark tasks as completed
-- 📂 Create and manage task categories
+- 📂 Create and manage task cate
+- 🏷️ Task priority levels
+- ⏰ Reminder notifications
+- 🔍 Search & filteringgories
 - 💾 Persistent local storage using Room
 - ⚡ Optimized compilation using KSP
 - 🔄 Background task support (WorkManager)
@@ -117,12 +120,15 @@ This modular structure ensures scalability, maintainability, and separation of c
 
 ## 🚀 Future Improvements
 
-- Task priority levels
-- Reminder notifications
 - Dark mode support
 - Firebase cloud sync
 - Search & filtering
-
+- Analytics & task statistics
+- Daily/weekly summary notifications
+- Multi-device sync
+- Export tasks as PDF/CSV
+- Advanced search & filters
+  
 ---
 
 ## 👩‍💻 Author

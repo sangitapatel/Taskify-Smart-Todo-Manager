@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Taskify – Smart Todo Manager</string>
+
+
+    <string name="all">All</string>
+    <string name="back">Back</string>
+
+    <string name="new_task">New Task</string>
+    <string name="task_name">Task Name</string>
+
+    <string name="category">Category</string>
+    <string name="choose_category">Choose Category</string>
+
+    <string name="add_task">Add Task</string>
+    <string name="edit_task">Edit Task</string>
+
+    <string name="choose_time">Choose Time</string>
+    <string name="choose_date">Choose Date</string>
+
+    <string name="something_wrong">Something went wrong</string>
+    <string name="unknown_error">Unknown error</string>
+
+    <string name="search">Search</string>
+
+    <string name="manage_category">Manage Category</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="delete_category">Delete Category</string>
+    <string name="add_category">Add Category</string>
+
+    <string name="name">Name</string>
+
+    <string name="click_plus_to_add_task">
+        Click the \'+\' button to start adding a new task
+    </string>
+    <string name="click_plus_to_add_category">
+        Click the \'+\' button to start adding a new category
+    </string>
+</resources>

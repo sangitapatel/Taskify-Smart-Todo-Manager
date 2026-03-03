@@ -1,0 +1,284 @@
+package com.taskify.todomanager.ui.home
+
+import androidx.lifecycle.viewModelScope
+import com.taskify.todomanager.R
+import com.taskify.todomanager.data.entity.CategoryEntity
+import com.taskify.todomanager.data.entity.TaskEntity
+import com.taskify.todomanager.data.mechanism.Resource
+import com.taskify.todomanager.data.repository.ICategoryRepository
+import com.taskify.todomanager.data.repository.ITaskRepository
+import com.taskify.todomanager.ui.utils.BaseViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class HomeViewModel(
+    val taskRepository: ITaskRepository,
+    val categoryRepository: ICategoryRepository
+) : BaseViewModel<HomeUiState, HomeUiAction>() {
+    override val _state = MutableStateFlow(HomeUiState())
+
+    override fun doAction(action: HomeUiAction) {
+        when (action) {
+            is HomeUiAction.GetAllTasks -> getAllTasks()
+            is HomeUiAction.GetFilteredTasks -> getFilteredTasks(action.categoryId)
+            is HomeUiAction.SearchTasks -> searchTasks()
+            is HomeUiAction.PinTask -> pinTask(action.taskId)
+            is HomeUiAction.MarkAsDone -> markAsDoneTask(action.taskId)
+            is HomeUiAction.GetAllCategories -> getAllCategories()
+            is HomeUiAction.EnterSelectMode -> enterSelectMode(action.taskId)
+            is HomeUiAction.SelectTask -> selectTask(action.taskId)
+            is HomeUiAction.ExitSelectMode -> {
+                _state.update { it.copy(isSelectMode = false, multipleSelectedTasks = emptyList()) }
+            }
+
+            is HomeUiAction.EnterSearchMode -> {
+                _state.update { it.copy(isSearchMode = true) }
+            }
+
+            is HomeUiAction.SearchInputing -> {
+                _state.update { it.copy(searchInput = action.newSearch) }
+            }
+
+            is HomeUiAction.ExitSearchMode -> {
+                _state.update { it.copy(isSearchMode = false) }
+            }
+
+            HomeUiAction.MarkAsDoneMultiple -> markAsDoneSelectedTasks()
+            HomeUiAction.DeleteSelectedTasks -> deleteSelectedTasks()
+            HomeUiAction.ShowErrorDialog -> {
+                _state.update { it.copy(showErrorDialog = true) }
+            }
+
+            HomeUiAction.HideErrorDialog -> {
+                _state.update { it.copy(showErrorDialog = false) }
+            }
+
+            is HomeUiAction.SelectCategoryFilter -> _state.update { it.copy(selectedCategory = action.categoryId) }
+        }
+    }
+
+    private fun enterSelectMode(taskId: Int) {
+        _state.update {
+            it.copy(
+                isSelectMode = true,
+                multipleSelectedTasks = it.multipleSelectedTasks + taskId
+            )
+        }
+    }
+
+    private fun selectTask(taskId: Int) {
+        _state.update {
+            val newList = if (it.multipleSelectedTasks.contains(taskId)) {
+                it.multipleSelectedTasks - taskId
+            } else {
+                it.multipleSelectedTasks + taskId
+            }
+            it.copy(
+                multipleSelectedTasks = newList,
+                isSelectMode = newList.isNotEmpty()
+            )
+        }
+    }
+
+
+    private fun getAllTasks() {
+        viewModelScope.launch {
+            taskRepository.getAllTasks().collectLatest { data ->
+                _state.update { state ->
+                    state.copy(
+                        taskData = data
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getAllCategories() {
+        viewModelScope.launch {
+            categoryRepository.getAllCategories()
+                .collectLatest { data ->
+                    _state.update { state ->
+                        state.copy(
+                            categoryData = data
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun getFilteredTasks(categoryId: Int) {
+        viewModelScope.launch {
+
+            taskRepository.filterTasksByCategory(categoryId).collectLatest { data ->
+                _state.update { state ->
+                    state.copy(
+                        taskData = data
+                    )
+                }
+            }
+
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun searchTasks() {
+        viewModelScope.launch {
+            taskRepository.searchTasks(state.value.searchInput)
+                .debounce(300)
+                .collectLatest { data ->
+                    _state.update { state ->
+                        state.copy(
+                            taskData = data
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun pinTask(taskId: Int) {
+        val currentTask = state.value.taskData.data?.find { it.id == taskId }
+        val newPin = !(currentTask?.isPinned ?: false)
+
+        viewModelScope.launch {
+            taskRepository.pinTask(taskId, newPin).collectLatest {
+                _state.update { state ->
+                    state.copy(
+                        actionResult = it
+                    )
+                }
+            }
+
+            getAllTasks()
+        }
+    }
+
+    private fun markAsDoneTask(taskId: Int) {
+        val currentTask = state.value.taskData.data?.find { it.id == taskId }
+        val newDoneTask = !(currentTask?.isDone ?: false)
+
+        viewModelScope.launch {
+            taskRepository.markAsDone(taskId, newDoneTask)
+                .collectLatest {
+                    _state.update { state ->
+                        state.copy(
+                            actionResult = it
+                        )
+                    }
+                }
+            getAllTasks()
+        }
+    }
+
+    private fun markAsDoneSelectedTasks() {
+        viewModelScope.launch {
+            val selectedTasks = state.value.multipleSelectedTasks
+
+            if (selectedTasks.isNotEmpty()) {
+                taskRepository.multipleMarkAsDone(selectedTasks).collectLatest { result ->
+                    _state.update {
+                        it.copy(
+                            actionResult = result,
+                            multipleSelectedTasks = emptyList(),
+                            isSelectMode = false
+                        )
+                    }
+                }
+
+                getAllTasks()
+            } else {
+                _state.update {
+                    it.copy(
+                        actionResult = Resource.Error(message = "Selected task is empty"),
+                    )
+                }
+            }
+        }
+    }
+    /*fun initDefaultCategories() {
+        viewModelScope.launch {
+            categoryRepository.insertDefaultCategoriesIfEmpty()
+            loadTasksAndCategories() // HomeScreen update કરવા
+        }
+    }*/
+    fun initDefaultCategories() {
+        viewModelScope.launch {
+            categoryRepository.insertDefaultCategoriesIfEmpty()
+            getAllCategories()
+            getAllTasks()
+        }
+    }
+    fun loadTasksAndCategories() {
+        viewModelScope.launch {
+            categoryRepository.getAllCategories().collectLatest { categoryResource ->
+                _state.update { it.copy(categoryData = categoryResource) }
+            }
+
+            taskRepository.getAllTasks().collectLatest { taskResource ->
+                _state.update { it.copy(taskData = taskResource) }
+            }
+        }
+    }
+
+    private fun deleteSelectedTasks() {
+        viewModelScope.launch {
+            val selectedTasks = state.value.multipleSelectedTasks
+
+
+            if (selectedTasks.isNotEmpty()) {
+                taskRepository.deleteTasks(selectedTasks).collectLatest { result ->
+                    _state.update {
+                        it.copy(
+                            actionResult = result,
+                            multipleSelectedTasks = emptyList(),
+                            isSelectMode = false
+                        )
+                    }
+                }
+
+                getAllTasks()
+            } else {
+                _state.update {
+                    it.copy(
+                        actionResult = Resource.Error(message = "Selected task is empty"),
+                    )
+                }
+            }
+        }
+    }
+}
+
+data class HomeUiState(
+    val searchInput: String = "",
+    val taskData: Resource<List<TaskEntity>> = Resource.Idle(),
+    val categoryData: Resource<List<CategoryEntity>> = Resource.Idle(),
+    val isSelectMode: Boolean = false,
+    val isSearchMode: Boolean = false,
+    val actionResult: Resource<Unit> = Resource.Idle(),
+    val multipleSelectedTasks: List<Int> = emptyList(),
+    val showErrorDialog: Boolean = false,
+    val selectedCategory: Int? = null
+)
+
+sealed class HomeUiAction {
+    data object GetAllTasks : HomeUiAction()
+    data object GetAllCategories : HomeUiAction()
+    data class GetFilteredTasks(val categoryId: Int) : HomeUiAction()
+    data object SearchTasks : HomeUiAction()
+    data class PinTask(val taskId: Int) : HomeUiAction()
+    data class MarkAsDone(val taskId: Int) : HomeUiAction()
+    data object MarkAsDoneMultiple : HomeUiAction()
+    data class EnterSelectMode(val taskId: Int) : HomeUiAction()
+    data class SelectTask(val taskId: Int) : HomeUiAction()
+    data class SearchInputing(val newSearch: String) : HomeUiAction()
+    data object ExitSelectMode : HomeUiAction()
+    data object EnterSearchMode : HomeUiAction()
+    data object ExitSearchMode : HomeUiAction()
+    data object DeleteSelectedTasks : HomeUiAction()
+    data object ShowErrorDialog : HomeUiAction()
+    data object HideErrorDialog : HomeUiAction()
+    data class SelectCategoryFilter(val categoryId: Int?)  : HomeUiAction()
+}

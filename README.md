@@ -75,7 +75,7 @@ Room database uses Kotlin Symbol Processing (KSP) for improved build performance
 WorkManager is used for background task execution.
 
 ---
-com.mahantkrupa.taskify
+com.taskify.todomanager
 │
 ├── data
 │ ├── dao

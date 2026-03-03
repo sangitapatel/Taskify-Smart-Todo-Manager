@@ -75,34 +75,6 @@ Room database uses Kotlin Symbol Processing (KSP) for improved build performance
 WorkManager is used for background task execution.
 
 ---
-com.taskify.todomanager
-│
-├── data
-│ ├── dao
-│ ├── database
-│ ├── entity
-│ ├── mechanism
-│ ├── repository
-│ ├── workmanager
-│
-├── di
-│ ├── AppModule.kt
-│ ├── DataModule.kt
-│ ├── UiModule.kt
-│
-├── ui
-│ ├── addTask
-│ ├── categories
-│ ├── edit
-│ ├── home
-│ ├── landingpage
-│ ├── maincontent
-│ ├── nav
-│ ├── utils
-
-This modular structure ensures scalability, maintainability, and separation of concerns.
-
----
 
 ## 🛠 Tech Stack
 
